@@ -1,0 +1,2 @@
+# MagicStick
+Repository for MagicStick.
