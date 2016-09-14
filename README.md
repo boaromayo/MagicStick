@@ -5,6 +5,8 @@ The game where drops of magic fall from the sky! Catch as much of these magic st
 
 You can play this either in a time challenge or for the highest score as possible!
 
+(Memo to self: think of having a version with letter tiles soon...)
+
 Mechanics
 ---------
 
