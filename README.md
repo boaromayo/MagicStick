@@ -8,7 +8,7 @@ You can play this either in a time challenge or for the highest score as possibl
 Mechanics
 ---------
 
-Coded in: Java
-1 player only
-Uses WASD or arrow keys.
-Can be timed or not.
+- Coded in: Java
+- 1 player only
+- Uses WASD or arrow keys.
+- Can be timed or not.
