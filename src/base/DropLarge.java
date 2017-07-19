@@ -34,22 +34,12 @@ public class DropLarge extends Drop {
 		setDY(2);
 	}
 	
-	public DropLarge(float x, float radius, float spd) {
+	public DropLarge(float x, float spd, int score) {
 		this.x = x;
 		this.y = -10;
-		this.radius = radius;
 		
-		// Set score value.
-		setScore(1);
-		
-		// Set falling speed.
-		setDY(spd);
-	}
-	
-	public DropLarge(float x, float radius, float spd, int score) {
-		this.x = x;
-		this.y = -10;
-		this.radius = radius;
+		// Set radius.
+		this.radius = 10;
 		
 		// Set score value.
 		setScore(score);
@@ -58,9 +48,10 @@ public class DropLarge extends Drop {
 		setDY(spd);
 	}
 	
-	public void draw(Graphics g) {
+	public void render(Graphics g) {
 		Graphics2D g2d = antialias(g);
 		
+		// Draw a large green drop.
 		g2d.setColor(Color.GREEN);
 		g2d.fillOval((int)this.x, (int)this.y, 
 				(int)this.radius, (int)this.radius);
