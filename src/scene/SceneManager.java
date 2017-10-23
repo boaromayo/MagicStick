@@ -32,7 +32,7 @@ public class SceneManager {
 		scenes = new Scene[SIZE];
 		index = -1;
 		
-		setScene(new SceneGame());
+		setScene(new SceneMenu());
 	}
 	
 	public void setScene(Scene scene) {
@@ -68,6 +68,19 @@ public class SceneManager {
 	public void clear() {
 		while (scenes != null || index >= 0) {
 			removeScene();
+		}
+	}
+	
+	public void delay(int s) {
+		int frames = 0;
+		int count = 0;
+		
+		if (count < s) {
+			frames++;
+			if (frames > 60) {
+				frames = 0;
+				count++;
+			}
 		}
 	}
 }
