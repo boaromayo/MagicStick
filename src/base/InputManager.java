@@ -62,6 +62,11 @@ public class InputManager {
 	
 	public static boolean keyPressed(int key) {
 		int i = checkKey(key);
+		return keyNow[i] && !keyPrevious[i];
+	}
+	
+	public static boolean keyDown(int key) {
+		int i = checkKey(key);
 		return keyNow[i];
 	}
 	
