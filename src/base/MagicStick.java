@@ -7,29 +7,26 @@ import javax.swing.*;
 
 import java.util.*;
 
+import scene.*;
+
 public class MagicStick extends JPanel {
-	
-	/*============================================*/
-	/* VARIABLES.
-	/* ===========================================*/
-	// CONSTANTS FOR WIDTH AND HEIGHT.
+	// SIZE CONSTANTS.
 	public static final int WIDTH = 480;
 	public static final int HEIGHT = 320;
+	
 	// CONSTANTS FOR GAME THREAD.
 	private final int FPS = 24;
 	private long timeTarget = 1000/FPS;
-	// DOUBLE BUFFERING VARIABLES.
+	
+	// DRAWING VARIABLES.
 	private Image dbi;
 	private Graphics dbg;
 	
-	// SCORE.
-	private int score;
+	// SCENE MANAGER.
+	private SceneManager sceneMgr;
 	
-	// STICK OBJECT.
-	private Stick stick;
-	// DROP ARRAYLIST OBJECT.
-	private LinkedList<Drop> drops;
-	//private DropLarge dropLrg;
+	// GAME CHECKERS.
+	private boolean running = false;
 	
 	/*====================================*/
 	/* CONSTRUCTOR for MagicStick().
@@ -40,9 +37,8 @@ public class MagicStick extends JPanel {
 		Thread t = new Thread() {
 			public void run() {
 				try {
-					while (true) {
+					while (running) {
 						updateGame();
-						renderGame();
 						repaint();
 						Thread.sleep(timeTarget);
 					}
@@ -58,10 +54,12 @@ public class MagicStick extends JPanel {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent kpe) {
-				stick.keyPressed(kpe);
+				int key = kpe.getKeyCode();
+				InputManager.setKey(key, true);
 				
-				switch(kpe.getKeyCode()) {
+				switch(key) {
 				case KeyEvent.VK_ESCAPE:
+					running = false;
 					System.exit(0);
 					break;
 				}
@@ -69,117 +67,71 @@ public class MagicStick extends JPanel {
 			
 			@Override
 			public void keyReleased(KeyEvent kre) {
-				stick.keyReleased(kre);
+				int key = kre.getKeyCode();
+				InputManager.setKey(key, false);
 			}
 		});
 		
 		setFocusable(true);
+		requestFocusInWindow();
 	}
 	
 	/*=========================================*/
-	/* initGame(), updateGame(), renderGame()
+	/* initialize, update, and render game.
 	/*=========================================*/
 	public void initGame() {
-		score = 0;
+		sceneMgr = SceneManager.get();
+		sceneMgr.initGame();
 		
-		stick = new Stick();
-		drops = new LinkedList<Drop>();
-		//dropLrg = new DropLarge();
+		running = true;
 	}
 	
 	public void updateGame() {
-		addDrops();
-		checkCollisions();
-	}
-	
-	public void renderGame() {
-		stick.move(); // Get stick input.
-		
-		for (int drop = 0; drop < drops.size(); drop++) {
-			drops.get(drop).move(); // Make drops move.
-		}
-		
-	}
-	
-	protected void addDrops() {
-		long tickTime = System.nanoTime();
-		double rand = Math.random();
-		
-		// Start launching the Magic Drops!!
-		if (tickTime % 50 == 0) {
-			drops.add(new DropLarge((int)rand % getWidth() - 
-					(getWidth() / 2) ));
-		}
-		if (tickTime % 1000 == 0) {
-			drops.add(new DropSmall((int)rand % getWidth() - 
-					(getWidth() / 8) ));
-		}
-		if (tickTime % 500 == 0) {
-			drops.add(new Drop((int)rand % getWidth() - 
-					(getWidth() / 4) ));
-		}
-		
- 	}
-	
-	protected void checkCollisions() {
-		for (int drop = 0; drop < drops.size(); drop++) {
-			if (stick.collides(drops.get(drop))) {
-				score += drops.get(drop).scoreValue();
-				drops.remove(drops.get(drop));
-			}
-			
-		}
+		sceneMgr.updateGame();
+		InputManager.updateGame();
 	}
 	
 	@Override
-	public void paint(Graphics g) {
-		dbi = createImage(getWidth(), getHeight()); // Create the image.
-		dbg = dbi.getGraphics(); // Graphics var gets graphics from image.
-		draw(dbg); // Call draw() method.
-		g.drawImage(dbi, 0, 0, this); // Draw the image of the graphics
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		if (dbi == null) {
+			dbi = createImage(WIDTH, HEIGHT);
+			if (dbi == null) {
+				System.err.println("ERROR: Buffer image is null.");
+				System.exit(1); // There's no image to see here...
+			} else {
+				dbg = dbi.getGraphics();
+			}
+		}
+		
+		renderGame(dbg);
+		g.drawImage(dbi, 0, 0, this);
 	}
 	
-	public void draw(Graphics g) {
-		// Convert Graphics var to Graphics2D and turn anti-alias on.
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
-		
-		for (int drop = 0; drop < drops.size(); drop++) {
-			drops.get(drop).draw(g2d); // Draw in drops.
-		}
-		//dropLrg.draw(g2d);
-		
-		stick.draw(g2d);
-		
-		g2d.setColor(Color.WHITE);
-		
-		g2d.setFont(new Font("Arial", Font.BOLD, 20));
-		g2d.drawString(Integer.toString(score), getWidth() - (getWidth() - 20), 
-				getHeight() - (getHeight() - 30));
-		// Dispose after done with graphics.
-		g2d.dispose();
+	public void renderGame(Graphics g) {
+		sceneMgr.renderGame(g);
 	}
 		
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				MagicStick m = new MagicStick(); // call BallDemo object.
+				//System.out.println("MagicStick - v0.5.0 loading frame...");
+				
+				MagicStick m = new MagicStick(); // make the game object.
 				JFrame frm = new JFrame();
 				
-				frm.setTitle("MagicStick Demo"); // Set the title.
+				frm.setTitle("MagicStick"); // Set the title.
 				frm.add(m);
 				
 				frm.setSize(WIDTH, HEIGHT); // Set size 480 x 320.
-				// Close when exit clicked.
-				frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				
+				frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close program when exit clicked.
 				frm.setLocationRelativeTo(null); // Center frame.
+				frm.setResizable(false);
 				frm.setVisible(true);
-				frm.setResizable(false); // Do not resize image.
+				
+				//System.out.println("MagicStick - v0.5.0 running...");
 			}
 		});
 	}

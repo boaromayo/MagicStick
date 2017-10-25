@@ -22,7 +22,7 @@ public class Drop implements Entity {
 		// Set score value.
 		setScore(2);
 		
-		// Set the directions.
+		// Set falling speed.
 		setDY(4);
 	}
 	
@@ -36,8 +36,12 @@ public class Drop implements Entity {
 		// Set score value.
 		setScore(2);
 		
-		// Set the directions.
+		// Set falling speed.
 		setDY(4);
+	}
+	
+	public void update() {
+		move();
 	}
 	
 	public void move() {
@@ -64,7 +68,7 @@ public class Drop implements Entity {
 		
 	}
 	
-	public void draw(Graphics g) {
+	public void render(Graphics g) {
 		Graphics2D g2d = antialias(g);
 		
 		g2d.setColor(Color.CYAN);
@@ -98,6 +102,6 @@ public class Drop implements Entity {
 	
 	public float getRadius() { return radius; }
 	
-	public Rectangle box() { return new Rectangle((int)this.x, (int)this.y, 
-			(int)this.radius, (int)this.radius); }
+	public Rectangle box() { return new Rectangle((int)x, (int)y, 
+			(int)radius, (int)radius); }
 }

@@ -3,20 +3,32 @@ package base;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.util.*;
-
 public class Stick implements Entity {
-	
+	// POSITION.
 	private float x, y;
-	private float w, h;
+	// SIZE.
+	private int w, h, arcw = 6, arch = 6;
+	// SPEED.
 	private float dx;
+	// TOGGLE DIRECTION.
+	private boolean left, right;
+	// FROZEN.
+	private boolean frozen;
+	// SCORE
+	private int score;
+	private int currentScore;
 	
 	public Stick() {
-		this.x = MagicStick.WIDTH / 2 - w;
+		this.x = MagicStick.WIDTH / 2;
 		this.y = MagicStick.HEIGHT - (MagicStick.HEIGHT / 4);
 		this.w = MagicStick.WIDTH / 8;
 		this.h = MagicStick.HEIGHT / 24;
 		
+		this.left = this.right = false;
+		this.frozen = false;
+		
+		this.score = 0;
+		this.currentScore = 0;
 	}
 	
 	public Stick(float x, float y) {
@@ -25,22 +37,19 @@ public class Stick implements Entity {
 		this.w = MagicStick.WIDTH / 8;
 		this.h = MagicStick.HEIGHT / 24;
 		
-	}
-	
-	public Stick(float x, float y, float w) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = MagicStick.HEIGHT / 30;
+		this.left = this.right = false;
+		this.frozen = false;
 		
+		this.score = 0;
+		this.currentScore = 0;
 	}
 	
-	public void draw(Graphics g) {
+	public void render(Graphics g) {
 		Graphics2D g2d = antialias(g);
 		
 		g2d.setColor(Color.WHITE);
-		g2d.fillRoundRect((int)this.x, (int)this.y, 
-				(int)this.w, (int)this.h, 6, 6);
+		g2d.fillRoundRect((int)x, (int)y, 
+				w, h, arcw, arch);
 	}
 	
 	public Graphics2D antialias(Graphics g) {
@@ -51,13 +60,60 @@ public class Stick implements Entity {
 		return g2d;
 	}
 	
+	public void update() {
+		updateScore();
+		checkInput();
+		move();
+	}
+	
+	private void checkInput() {
+		setLeft(InputManager.keyPressed(KeyEvent.VK_LEFT) || 
+				InputManager.keyPressed(KeyEvent.VK_A));
+		setRight(InputManager.keyPressed(KeyEvent.VK_RIGHT) || 
+				InputManager.keyPressed(KeyEvent.VK_D));
+		
+		if ( (InputManager.keyPressed(KeyEvent.VK_LEFT) || 
+				InputManager.keyPressed(KeyEvent.VK_A)) && 
+				(InputManager.keyPressed(KeyEvent.VK_RIGHT) || 
+				InputManager.keyPressed(KeyEvent.VK_D)) ) {
+			setLeft(false);
+			setRight(false);
+		}
+	}
+	
 	public void move() {
-		this.x += dx;
+		if (frozen) {
+			setDX(0);
+		} else {
+			if (left) {
+				setDX(-2);
+			} else if (right) {
+				setDX(2);
+			} else {
+				setDX(0);
+			}
+		}
+		
+		x += dx;
 
-		if (this.x < 0) {
-			this.x = 0;
-		} else if (this.x + this.w > MagicStick.WIDTH) {
-			this.x = MagicStick.WIDTH - this.w;
+		// Check if stick's within game bounds.
+		if (x < 0) {
+			x = 0;
+		} else if (x + w > MagicStick.WIDTH) {
+			x = MagicStick.WIDTH - w;
+		}
+	}
+	
+	private void updateScore() {
+		// Gradually increment the final printed score
+		// instead of printing it immediately.
+		if (score != currentScore) {
+			if (score < currentScore) {
+				score++;
+			}
+			if (score > currentScore) {
+				score--;
+			}
 		}
 	}
 	
@@ -80,7 +136,13 @@ public class Stick implements Entity {
 	
 	public void setDX(float dx) { this.dx = dx; }
 	
-	public void setWidth(float w) { this.w = w; }
+	public void setWidth(int w) { this.w = w; }
+	
+	public void setLeft(boolean left) { this.left = left; }
+	
+	public void setRight(boolean right) { this.right = right; }
+	
+	public void addScore(int i) { currentScore += i; }
 	
 	public float getX() { return x; }
 	
@@ -90,33 +152,8 @@ public class Stick implements Entity {
 	
 	public float getHeight() { return h; }
 	
-	public Rectangle box() { return new Rectangle((int)this.x, (int)this.y, 
-			(int)this.w, (int)this.h); }
+	public int score() { return score; }
 	
-	public void keyPressed(KeyEvent kpe) {
-		switch (kpe.getKeyCode()) {
-		case KeyEvent.VK_LEFT:
-			// MOVE LEFT
-			setDX(-6);
-			break;
-		case KeyEvent.VK_RIGHT:
-			// MOVE RIGHT
-			setDX(6);
-			break;
-		}
-	}
-		
-	public void keyReleased(KeyEvent kre) {
-		switch (kre.getKeyCode()) {
-		case KeyEvent.VK_LEFT:
-			// STOP
-			setDX(0);
-			break;
-		case KeyEvent.VK_RIGHT:
-			// STOP
-			setDX(0);
-			break;
-		}
-	}
-	
+	public Rectangle box() { return new Rectangle((int)x, (int)y, 
+			(int)w, (int)h); }
 }
