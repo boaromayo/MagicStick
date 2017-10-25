@@ -87,8 +87,8 @@ public class MagicStick extends JPanel {
 	}
 	
 	public void updateGame() {
-		InputManager.updateGame();
 		sceneMgr.updateGame();
+		InputManager.updateGame();
 	}
 	
 	@Override
@@ -116,6 +116,8 @@ public class MagicStick extends JPanel {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				//System.out.println("MagicStick - v0.5.0 loading frame...");
+				
 				MagicStick m = new MagicStick(); // make the game object.
 				JFrame frm = new JFrame();
 				
@@ -128,6 +130,8 @@ public class MagicStick extends JPanel {
 				frm.setLocationRelativeTo(null); // Center frame.
 				frm.setResizable(false);
 				frm.setVisible(true);
+				
+				//System.out.println("MagicStick - v0.5.0 running...");
 			}
 		});
 	}
