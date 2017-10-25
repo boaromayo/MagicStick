@@ -8,7 +8,7 @@ public abstract class Scene {
 	public abstract void updateGame();
 	public abstract void renderGame(Graphics g);
 	
-	public void delay(int s) {
+	/*public void delay(int s) {
 		int frames = 0;
 		int count = 0;
 		
@@ -20,5 +20,5 @@ public abstract class Scene {
 				System.out.println(count);
 			}
 		}
-	}
+	}*/
 }
