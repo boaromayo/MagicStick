@@ -13,7 +13,9 @@ public class SceneGame extends Scene {
 	// PAUSE TOGGLE.
 	private boolean paused = false;
 	
-	public SceneGame() {
+	public SceneGame(SceneManager sm) {
+		sceneMgr = sm;
+		
 		stick = new Stick();
 		drops = new ArrayList<Drop>();
 	}
@@ -65,6 +67,23 @@ public class SceneGame extends Scene {
 		
 		return g2d;
 	}
+	
+	// TODO: Refine this method in later releases.
+	/*private void addDrop(int rand) {
+		// Add a new drop if one is taken or is off-screen.
+		if (rand % 30 == 0) {
+			drops.add(new DropLarge((int)rand % MagicStick.WIDTH - 
+					(MagicStick.WIDTH / 2) ));
+		}
+		if (rand % 100 == 0) {
+			drops.add(new Drop((int)rand % MagicStick.WIDTH - 
+					(MagicStick.WIDTH / 4) ));
+		}
+		if (rand % 300 == 0) {
+			drops.add(new DropSmall((int)rand % MagicStick.WIDTH - 
+					(MagicStick.WIDTH / 8) ));
+		}
+	}*/
 	
 	private void addDrops() {
 		long tickTime = System.nanoTime();
