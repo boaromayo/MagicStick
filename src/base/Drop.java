@@ -8,7 +8,7 @@ public class Drop implements Entity {
 	
 	protected float x, y, dx, dy, radius;
 	protected int score;
-	//private Image dropImg;
+	//private BufferedImage dropImg;
 	
 	public Drop() {
 		Random rand = new Random();
@@ -74,6 +74,13 @@ public class Drop implements Entity {
 		g2d.setColor(Color.CYAN);
 		g2d.fillOval((int)this.x, (int)this.y, 
 				(int)this.radius, (int)this.radius);
+		
+		/*g2d.drawImage(dropImg, 
+				(int)this.x, 
+				(int)this.y, 
+				dropImg.getWidth(), 
+				dropImg.getHeight(), 
+				null);*/
 	}
 	
 	public Graphics2D antialias(Graphics g) {
@@ -82,6 +89,10 @@ public class Drop implements Entity {
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		return g2d; // Return Graphics2D object.
+	}
+	
+	public void effect(Stick s) {
+		s.addScore(scoreValue());
 	}
 	
 	public void setDX(float dx) { this.dx = dx; }

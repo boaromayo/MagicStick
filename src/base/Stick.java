@@ -17,6 +17,8 @@ public class Stick implements Entity {
 	// SCORE
 	private int score;
 	private int currentScore;
+	// LIVES
+	private int lives;
 	
 	public Stick() {
 		this.x = MagicStick.WIDTH / 2;
@@ -29,6 +31,8 @@ public class Stick implements Entity {
 		
 		this.score = 0;
 		this.currentScore = 0;
+		
+		this.lives = 3;
 	}
 	
 	public Stick(float x, float y) {
@@ -42,6 +46,8 @@ public class Stick implements Entity {
 		
 		this.score = 0;
 		this.currentScore = 0;
+		
+		this.lives = 3;
 	}
 	
 	public void render(Graphics g) {
@@ -67,15 +73,15 @@ public class Stick implements Entity {
 	}
 	
 	private void checkInput() {
-		setLeft(InputManager.keyPressed(KeyEvent.VK_LEFT) || 
-				InputManager.keyPressed(KeyEvent.VK_A));
-		setRight(InputManager.keyPressed(KeyEvent.VK_RIGHT) || 
-				InputManager.keyPressed(KeyEvent.VK_D));
+		setLeft(InputManager.keyDown(KeyEvent.VK_LEFT) || 
+				InputManager.keyDown(KeyEvent.VK_A));
+		setRight(InputManager.keyDown(KeyEvent.VK_RIGHT) || 
+				InputManager.keyDown(KeyEvent.VK_D));
 		
-		if ( (InputManager.keyPressed(KeyEvent.VK_LEFT) || 
-				InputManager.keyPressed(KeyEvent.VK_A)) && 
-				(InputManager.keyPressed(KeyEvent.VK_RIGHT) || 
-				InputManager.keyPressed(KeyEvent.VK_D)) ) {
+		if ( (InputManager.keyDown(KeyEvent.VK_LEFT) || 
+				InputManager.keyDown(KeyEvent.VK_A)) && 
+				(InputManager.keyDown(KeyEvent.VK_RIGHT) || 
+				InputManager.keyDown(KeyEvent.VK_D)) ) {
 			setLeft(false);
 			setRight(false);
 		}
@@ -86,9 +92,9 @@ public class Stick implements Entity {
 			setDX(0);
 		} else {
 			if (left) {
-				setDX(-2);
+				setDX(-3);
 			} else if (right) {
-				setDX(2);
+				setDX(3);
 			} else {
 				setDX(0);
 			}
@@ -144,6 +150,10 @@ public class Stick implements Entity {
 	
 	public void addScore(int i) { currentScore += i; }
 	
+	public void addLife() { lives += 1; }
+	
+	public void takeLife() { lives -= 1; }
+	
 	public float getX() { return x; }
 	
 	public float getY() { return y; }
@@ -151,6 +161,8 @@ public class Stick implements Entity {
 	public float getWidth() { return w; }
 	
 	public float getHeight() { return h; }
+	
+	public int life() { return lives; }
 	
 	public int score() { return score; }
 	
