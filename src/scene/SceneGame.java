@@ -30,6 +30,10 @@ public class SceneGame extends Scene {
 			Drop drop = drops.get(i);
 			drop.update(); // Make drops move.
 		}
+		
+		if (stick.life() <= 0) {
+			sceneMgr.setScene(new SceneMenu(sceneMgr));
+		}
 	}
 	
 	public void renderGame(Graphics g) {
@@ -54,6 +58,11 @@ public class SceneGame extends Scene {
 		g2d.setColor(Color.WHITE);
 		g2d.drawString(Integer.toString(stick.score()), 
 				MagicStick.WIDTH - (MagicStick.WIDTH - 20), 
+				MagicStick.HEIGHT - (MagicStick.HEIGHT - 30));
+		
+		// Draw player's lives
+		g2d.drawString(Integer.toString(stick.life()),
+				MagicStick.WIDTH - 40,
 				MagicStick.HEIGHT - (MagicStick.HEIGHT - 30));
 	}
 	
@@ -102,6 +111,10 @@ public class SceneGame extends Scene {
 			drops.add(new Drop((int)rand % MagicStick.WIDTH - 
 					(MagicStick.WIDTH / 4) ));
 		}
+		if (tickTime % 1000 == 0) {
+			drops.add(new Star((int)rand % MagicStick.WIDTH - 
+					(MagicStick.WIDTH / 4) ));
+		}
 		
  	}
 	
@@ -109,7 +122,7 @@ public class SceneGame extends Scene {
 		for (int i = 0; i < drops.size(); i++) {
 			Drop drop = drops.get(i);
 			if (stick.collides(drop)) {
-				stick.addScore(drop.scoreValue());
+				drop.effect(stick);
 				//drop.setVisible(false);
 				drops.remove(drop);
 			}
