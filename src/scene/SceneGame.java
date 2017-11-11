@@ -10,6 +10,7 @@ public class SceneGame extends Scene {
 	private Stick stick;
 	// DROP ARRAYLIST OBJECT.
 	private ArrayList<Drop> drops;
+	private ArrayList<Powerup> powerups;
 	// PAUSE TOGGLE.
 	private boolean paused = false;
 	
@@ -18,6 +19,7 @@ public class SceneGame extends Scene {
 		
 		stick = new Stick();
 		drops = new ArrayList<Drop>();
+		powerups = new ArrayList<Powerup>();
 	}
 	
 	public void updateGame() {
@@ -29,6 +31,11 @@ public class SceneGame extends Scene {
 		for (int i = 0; i < drops.size(); i++) {
 			Drop drop = drops.get(i);
 			drop.update(); // Make drops move.
+		}
+		
+		for (int i = 0; i < powerups.size(); i++) {
+			Powerup p = powerups.get(i);
+			p.update(); // Make powerups move.
 		}
 		
 		if (stick.life() <= 0) {
@@ -125,6 +132,13 @@ public class SceneGame extends Scene {
 				drop.effect(stick);
 				//drop.setVisible(false);
 				drops.remove(drop);
+			}
+		}
+		for (int i = 0; i < powerups.size(); i++) {
+			Powerup p = powerups.get(i);
+			if (stick.collides(p)) {
+				p.effect(stick); // Call effect on stick.
+				powerups.remove(p);
 			}
 		}
 	}
