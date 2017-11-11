@@ -12,6 +12,4 @@ public interface Entity {
 	public float getX();
 	public float getY();
 	public Rectangle box();
-	
-	
 }
