@@ -124,18 +124,19 @@ public class Stick implements Entity {
 	}
 	
 	public boolean collides(Drop drop) {
-		if ((this.getX() + this.getWidth() > drop.getX()) &&
+		return ((this.getX() + this.getWidth() > drop.getX()) &&
 			(this.getX() < drop.getX() + drop.getRadius()) &&
 			(this.getY() + this.getHeight() > drop.getY()) &&
-			(this.getY() < drop.getY() + drop.getRadius())) {
-			return true;
-		}
-		
-		if (this.box().intersects(drop.box())) {
-			return true;
-		}
-		
-		return false;
+			(this.getY() < drop.getY() + drop.getRadius()) || 
+			(this.box().intersects(drop.box())) );
+	}
+	
+	public boolean collides(Powerup powerup) {
+		return ((this.getX() + this.getWidth() > powerup.getX()) &&
+				(this.getX() < powerup.getX() + powerup.getWidth()) &&
+				(this.getY() + this.getHeight() > powerup.getY()) &&
+				(this.getY() < powerup.getY() + powerup.getHeight()) ||
+				(this.box().intersects(powerup.box())) );
 	}
 	
 	public void setX(float x) { this.x = x; }
